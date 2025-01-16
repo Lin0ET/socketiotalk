@@ -1,23 +1,50 @@
-const socket = io();
+const socket = io('http://localhost:3000');
 
-// 獲取 DOM 元素
-const form = document.getElementById('chat-form');
-const input = document.getElementById('message-input');
-const messages = document.getElementById('messages');
+// 模擬當前使用者 ID（應從後端或登入系統獲取）
+const userId = prompt('請輸入您的使用者 ID:');
+socket.emit('addNewUser', userId);
 
-// 當表單提交時
-form.addEventListener('submit', (e) => {
-    e.preventDefault(); // 防止重新加載頁面
-    if (input.value) {
-        socket.emit('chat message', input.value); // 發送訊息到伺服器
-        input.value = ''; // 清空輸入框
-    }
+// 更新線上使用者列表
+socket.on('getOnlineUsers', (users) => {
+    const recipientSelect = document.getElementById('recipient-select');
+    recipientSelect.innerHTML = ''; // 清空選單
+
+    users.forEach((user) => {
+        if (user !== userId) { // 不顯示自己
+            const option = document.createElement('option');
+            option.value = user;
+            option.textContent = user;
+            recipientSelect.appendChild(option);
+        }
+    });
 });
 
-// 當收到新的訊息時
-socket.on('chat message', (msg) => {
+// 發送私人訊息
+function sendMessage() {
+    const recipientId = document.getElementById('recipient-select').value;
+    const messageInput = document.getElementById('message-input');
+    const message = messageInput.value.trim();
+
+    if (recipientId && message) {
+        socket.emit('sendMessage', {
+            senderId: userId,
+            recipientId,
+            message,
+        });
+
+        // 顯示在自己的聊天框
+        const chatBox = document.getElementById('chat-box');
+        const li = document.createElement('li');
+        li.textContent = `您對 ${recipientId}: ${message}`;
+        chatBox.appendChild(li);
+        messageInput.value = '';
+    }
+}
+
+// 接收私人訊息
+socket.on('getMessage', ({ senderId, message }) => {
+    const chatBox = document.getElementById('chat-box');
     const li = document.createElement('li');
-    li.textContent = msg;
-    messages.appendChild(li);
-    messages.scrollTop = messages.scrollHeight; // 滾動到底部
+    li.textContent = `來自 ${senderId}: ${message}`;
+    chatBox.appendChild(li);
 });

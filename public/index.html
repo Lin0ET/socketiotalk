@@ -3,17 +3,142 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>聊天室</title>
-    <link rel="stylesheet" href="style.css">
+    <title>一對一聊天室</title>
+    <style>
+        /* 全局樣式 */
+        body {
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            background-color: #f5f7fa;
+            color: #333;
+        }
+    
+        h2 {
+            color: #4a90e2;
+            margin-bottom: 20px;
+        }
+    
+        /* 聊天框區域 */
+        #chat-box {
+            width: 80%;
+            max-width: 600px;
+            height: 50%;
+            background: #ffffff;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+            overflow-y: auto;
+            border: 1px solid #ddd;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+    
+        #chat-box h3 {
+            margin: 0 0 10px 0;
+            color: #4a90e2;
+            font-size: 18px;
+        }
+    
+        #chat-box ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+    
+        #chat-box li {
+            margin-bottom: 10px;
+            padding: 10px;
+            background: #f1f1f1;
+            border-radius: 8px;
+        }
+    
+        #chat-box li:nth-child(odd) {
+            background: #e6f7ff;
+        }
+    
+        /* 控制區域 */
+        #controls {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            width: 80%;
+            max-width: 600px;
+        }
+    
+        #recipient-select {
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            background: #fff;
+            font-size: 14px;
+            width: 150px;
+        }
+    
+        #message-input {
+            flex: 1;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 14px;
+            background: #ffffff;
+        }
+    
+        #send-button {
+            padding: 10px 20px;
+            border: none;
+            background-color: #4a90e2;
+            color: #fff;
+            font-size: 14px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+    
+        #send-button:hover {
+            background-color: #357ab7;
+        }
+    
+        /* 行動裝置適配 */
+        @media (max-width: 768px) {
+            #chat-box {
+                width: 90%;
+                height: 40%;
+            }
+    
+            #controls {
+                flex-direction: column;
+                gap: 10px;
+            }
+    
+            #recipient-select, #message-input, #send-button {
+                width: 100%;
+            }
+        }
+    </style>
+    
 </head>
 <body>
-    <div id="chat-container">
-        <ul id="messages"></ul>
-        <form id="chat-form">
-            <input id="message-input" autocomplete="off" placeholder="輸入訊息..." />
-            <button>送出</button>
-        </form>
+    <h2>一對一聊天室</h2>
+
+    <div id="chat-box">
+        <h3>聊天內容</h3>
+        <ul></ul>
     </div>
+
+    <div id="controls">
+        <select id="recipient-select">
+            <option value="" disabled selected>選擇接收者</option>
+        </select>
+        <input id="message-input" type="text" placeholder="輸入訊息...">
+        <button id="send-button" onclick="sendMessage()">送出</button>
+    </div>
+
     <script src="/socket.io/socket.io.js"></script>
     <script src="script.js"></script>
 </body>
